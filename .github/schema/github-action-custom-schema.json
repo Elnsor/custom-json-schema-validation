@@ -1,0 +1,1100 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "GitHub Actions Complete Master Schema with Input Autocomplete",
+    "description": "Consolidated schema for GitHub Actions workflow validation and autocomplete inside VS Code with full input/parameter support.",
+    "type": "object",
+    "required": [
+        "on",
+        "jobs"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of your workflow displayed on the GitHub Actions page."
+        },
+        "run-name": {
+            "type": "string",
+            "description": "The name for workflow runs generated from the workflow. Can evaluate context expressions."
+        },
+        "on": {
+            "description": "The event or list of events that trigger the workflow run.",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "push",
+                        "pull_request",
+                        "workflow_dispatch",
+                        "workflow_call",
+                        "schedule",
+                        "release",
+                        "create",
+                        "delete",
+                        "fork",
+                        "gollum"
+                    ]
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "push": {
+                            "$ref": "#/definitions/push_pull_event"
+                        },
+                        "pull_request": {
+                            "$ref": "#/definitions/push_pull_event"
+                        },
+                        "workflow_dispatch": {
+                            "type": "object",
+                            "properties": {
+                                "inputs": {
+                                    "$ref": "#/definitions/workflow_dispatch_inputs"
+                                }
+                            }
+                        },
+                        "workflow_call": {
+                            "type": "object",
+                            "properties": {
+                                "inputs": {
+                                    "$ref": "#/definitions/workflow_dispatch_inputs"
+                                },
+                                "secrets": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "inherit"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "required": [
+                                                    "description"
+                                                ],
+                                                "properties": {
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "required": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "schedule": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "cron"
+                                ],
+                                "properties": {
+                                    "cron": {
+                                        "type": "string",
+                                        "description": "POSIX cron expression."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "env": {
+            "type": "object",
+            "description": "Global environment variables available across all jobs.",
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "defaults": {
+            "type": "object",
+            "properties": {
+                "run": {
+                    "type": "object",
+                    "properties": {
+                        "shell": {
+                            "type": "string"
+                        },
+                        "working-directory": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "permissions": {
+            "$ref": "#/definitions/workflow_permissions"
+        },
+        "concurrency": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "group"
+                    ],
+                    "properties": {
+                        "group": {
+                            "type": "string"
+                        },
+                        "cancel-in-progress": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            ]
+        },
+        "jobs": {
+            "type": "object",
+            "description": "The configuration of execution modules containing your tasks.",
+            "additionalProperties": {
+                "type": "object",
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/standard_job"
+                    },
+                    {
+                        "$ref": "#/definitions/reusable_workflow_job"
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "push_pull_event": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "branches": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "branches-ignore": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "tags-ignore": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "paths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "paths-ignore": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "workflow_dispatch_inputs": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "required": [
+                    "description"
+                ],
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "default": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "string",
+                            "choice",
+                            "boolean",
+                            "environment"
+                        ]
+                    },
+                    "options": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "workflow_permissions": {
+            "type": "object",
+            "description": "Fine-grained permissions configuration for GITHUB_TOKEN scopes.",
+            "additionalProperties": false,
+            "properties": {
+                "actions": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "checks": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "contents": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "deployments": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "id-token": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ],
+                    "description": "Required for OpenID Connect (OIDC) cloud authentication."
+                },
+                "issues": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "packages": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "pull-requests": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "repository-projects": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "security-events": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                },
+                "statuses": {
+                    "type": "string",
+                    "enum": [
+                        "read",
+                        "write",
+                        "none"
+                    ]
+                }
+            }
+        },
+        "standard_job": {
+            "type": "object",
+            "required": [
+                "runs-on",
+                "steps"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "needs": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                },
+                "runs-on": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "ubuntu-latest",
+                                "ubuntu-24.04",
+                                "ubuntu-22.04",
+                                "windows-latest",
+                                "macos-latest"
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                },
+                "permissions": {
+                    "$ref": "#/definitions/workflow_permissions"
+                },
+                "environment": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "url": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "concurrency": {
+                    "$ref": "#/properties/concurrency"
+                },
+                "outputs": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "env": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "defaults": {
+                    "$ref": "#/properties/defaults"
+                },
+                "if": {
+                    "$ref": "#/definitions/context_autocomplete_enums"
+                },
+                "steps": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "if": {
+                                "$ref": "#/definitions/context_autocomplete_enums"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "uses": {
+                                "$ref": "#/definitions/action_uses"
+                            },
+                            "run": {
+                                "type": "string"
+                            },
+                            "with": {
+                                "type": "object",
+                                "additionalProperties": true
+                            },
+                            "env": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                }
+                            },
+                            "continue-on-error": {
+                                "type": "boolean"
+                            },
+                            "timeout-minutes": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "timeout-minutes": {
+                    "type": "integer"
+                },
+                "continue-on-error": {
+                    "type": "boolean"
+                },
+                "strategy": {
+                    "type": "object",
+                    "properties": {
+                        "matrix": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "number"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "fail-fast": {
+                            "type": "boolean"
+                        },
+                        "max-parallel": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "action_uses": {
+            "type": "string",
+            "pattern": "^([^/@]+)/([^/@]+)(@.+)?$|^docker://(.+)$",
+            "description": "The GitHub Action to execute (e.g., actions/checkout@v4)",
+            "default": "actions/checkout@v4",
+            "examples": [
+                "actions/checkout@v4",
+                "actions/setup-node@v4",
+                "actions/setup-python@v4",
+                "docker://ubuntu:22.04"
+            ],
+            "markdownDescription": "**GitHub Marketplace Action**\n\n**Format**: `owner/action@version` or `docker://image:tag`\n\n**Version can be**:\n- Semantic version: `@v4`, `@v3.2.1`\n- Major version: `@v4` (uses latest v4.x)\n- Branch name: `@main`, `@develop`\n- Commit SHA: `@a1b2c3d4e5f6g7h8`\n\n📚 [Browse All GitHub Marketplace Actions →](https://github.com/marketplace?type=actions)"
+        },
+        "checkout_with": {
+            "type": "object",
+            "description": "Input parameters for actions/checkout",
+            "additionalProperties": true,
+            "properties": {
+                "repository": {
+                    "type": "string",
+                    "description": "Repository name with owner. For example, actions/checkout"
+                },
+                "ref": {
+                    "type": "string",
+                    "description": "The branch, tag, or SHA to checkout. When checking out the repository that triggered a workflow, this defaults to the reference or SHA for that event."
+                },
+                "token": {
+                    "type": "string",
+                    "description": "Personal access token (PAT) used to fetch the repository"
+                },
+                "ssh-key": {
+                    "type": "string",
+                    "description": "SSH key used to fetch the repository"
+                },
+                "ssh-known-hosts": {
+                    "type": "string",
+                    "description": "Known hosts in addition to the user and global known_hosts file"
+                },
+                "ssh-strict": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Whether to perform strict host key checking"
+                },
+                "persist-credentials": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Whether to configure the token or SSH key with the local git config"
+                },
+                "clean": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Whether to execute git clean -ffdx && git reset --hard HEAD before fetching"
+                },
+                "fetch-depth": {
+                    "type": "string",
+                    "description": "Number of commits to fetch. 0 indicates all history for all branches and tags"
+                },
+                "lfs": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Whether to download Git-LFS files"
+                },
+                "submodules": {
+                    "type": "string",
+                    "enum": ["true", "false", "recursive"],
+                    "description": "Whether to checkout submodules: `true`, `false`, or `recursive`"
+                },
+                "set-safe-directory": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Add the repository path as a safe directory in git global config"
+                },
+                "github-server-url": {
+                    "type": "string",
+                    "description": "The base URL for the GitHub instance that you are trying to clone from"
+                }
+            }
+        },
+        "setup_node_with": {
+            "type": "object",
+            "description": "Input parameters for actions/setup-node",
+            "additionalProperties": true,
+            "properties": {
+                "node-version": {
+                    "type": "string",
+                    "description": "Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.1"
+                },
+                "node-version-file": {
+                    "type": "string",
+                    "description": "File containing the version Spec of the version to use. Examples: .nvmrc, .node-version"
+                },
+                "registry-url": {
+                    "type": "string",
+                    "description": "Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and make auth available to subsequent ease of use with actions/setup-node/action.yml@main run steps that use those clients"
+                },
+                "scope": {
+                    "type": "string",
+                    "description": "Optional scope for authenticating against scoped registries"
+                },
+                "cache": {
+                    "type": "string",
+                    "enum": ["npm", "yarn", "pnpm"],
+                    "description": "Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm"
+                },
+                "cache-dependency-path": {
+                    "type": "string",
+                    "description": "Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc."
+                },
+                "architecture": {
+                    "type": "string",
+                    "enum": ["x64", "x86"],
+                    "description": "Architecture of Node to use. Defaults to x64. Will use runner OS architecture by default."
+                },
+                "check-latest": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Deprecated. Use node-version-file instead"
+                },
+                "token": {
+                    "type": "string",
+                    "description": "Used to pull node distributions from node-versions releases. Since there's a default, this is typically not supplied by users"
+                }
+            }
+        },
+        "setup_python_with": {
+            "type": "object",
+            "description": "Input parameters for actions/setup-python",
+            "additionalProperties": true,
+            "properties": {
+                "python-version": {
+                    "type": "string",
+                    "description": "Version range or exact version of a Python version to use, using SemVer's version range syntax. Reads from .python-version if unset"
+                },
+                "python-version-file": {
+                    "type": "string",
+                    "description": "File containing the Python version to use. Example: .python-version, pyproject.toml, .tool-versions"
+                },
+                "cache": {
+                    "type": "string",
+                    "enum": ["pip", "pipenv", "poetry"],
+                    "description": "Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry"
+                },
+                "cache-dependency-path": {
+                    "type": "string",
+                    "description": "Used to specify the path to dependency files. Supports wildcards and multiple file names for caching multiple dependencies"
+                },
+                "architecture": {
+                    "type": "string",
+                    "enum": ["x64", "x86"],
+                    "description": "The target architecture of Python or PyPy to install. Defaults to x64"
+                },
+                "token": {
+                    "type": "string",
+                    "description": "Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by users"
+                },
+                "update-environment": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Update environment PATH and PYTHONPATH. Defaults to true"
+                },
+                "allow-prereleases": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Allows to install pre-releases and development versions. Defaults to false"
+                }
+            }
+        },
+        "upload_artifact_with": {
+            "type": "object",
+            "description": "Input parameters for actions/upload-artifact",
+            "additionalProperties": true,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Artifact name"
+                },
+                "path": {
+                    "type": "string",
+                    "description": "A file, directory or wildcard pattern that describes what to upload"
+                },
+                "if-no-files-found": {
+                    "type": "string",
+                    "enum": ["warn", "error", "ignore"],
+                    "description": "The desired behavior if no files are found using the provided path"
+                },
+                "retention-days": {
+                    "type": "string",
+                    "description": "Duration after which artifact will expire in days. 0 means using repository/org default, -1 means indefinite retention"
+                },
+                "compression-level": {
+                    "type": "string",
+                    "description": "The level of compression for Zlib to be applied to the artifact archive"
+                },
+                "overwrite": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "If true, an artifact with the same name will be overwritten"
+                }
+            }
+        },
+        "download_artifact_with": {
+            "type": "object",
+            "description": "Input parameters for actions/download-artifact",
+            "additionalProperties": true,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the artifact to download"
+                },
+                "path": {
+                    "type": "string",
+                    "description": "Destination path"
+                },
+                "github-token": {
+                    "type": "string",
+                    "description": "GitHub token for authentication"
+                }
+            }
+        },
+        "cache_with": {
+            "type": "object",
+            "description": "Input parameters for actions/cache",
+            "additionalProperties": true,
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "A list of files, directories, and wildcard patterns to cache and restore"
+                },
+                "key": {
+                    "type": "string",
+                    "description": "An explicit key for restoring and saving the cache"
+                },
+                "restore-keys": {
+                    "type": "string",
+                    "description": "An ordered list of alternative keys to use for finding the cache if no cache hit occurred for key"
+                },
+                "upload-chunk-size": {
+                    "type": "string",
+                    "description": "The chunk size used to split up large files during upload, in bytes"
+                },
+                "enableCrossOsSymlink": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "If true, enables cross-OS symbolic link. Defaults to false"
+                },
+                "fail-on-cache-miss": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Fail the workflow if cache entry is not found"
+                },
+                "lookup-only": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "If true, only checks if cache entry exists and skips download"
+                }
+            }
+        },
+        "docker_build_push_with": {
+            "type": "object",
+            "description": "Input parameters for docker/build-push-action",
+            "additionalProperties": true,
+            "properties": {
+                "context": {
+                    "type": "string",
+                    "description": "Build context"
+                },
+                "file": {
+                    "type": "string",
+                    "description": "Path to Dockerfile"
+                },
+                "push": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Push is a shorthand for --output type=registry"
+                },
+                "tags": {
+                    "type": "string",
+                    "description": "List of tags"
+                },
+                "build-args": {
+                    "type": "string",
+                    "description": "List of build-time variables"
+                },
+                "target": {
+                    "type": "string",
+                    "description": "Sets the target stage to build"
+                },
+                "no-cache": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Do not use cache when building the image"
+                },
+                "platforms": {
+                    "type": "string",
+                    "description": "Set the target platforms for the build. Comma-separated string"
+                },
+                "load": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Load is a shorthand for --output type=docker"
+                },
+                "outputs": {
+                    "type": "string",
+                    "description": "List of output destinations"
+                },
+                "cache-from": {
+                    "type": "string",
+                    "description": "List of external cache sources"
+                },
+                "cache-to": {
+                    "type": "string",
+                    "description": "List of cache destinations"
+                }
+            }
+        },
+        "codecov_with": {
+            "type": "object",
+            "description": "Input parameters for codecov/codecov-action",
+            "additionalProperties": true,
+            "properties": {
+                "file": {
+                    "type": "string",
+                    "description": "Path to the coverage file"
+                },
+                "flags": {
+                    "type": "string",
+                    "description": "Flag the upload to group coverage metrics"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Custom defined name for the upload"
+                },
+                "fail_ci_if_error": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Fail CI if Codecov runs into an error during upload"
+                },
+                "verbose": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Enable verbose logging"
+                },
+                "token": {
+                    "type": "string",
+                    "description": "Codecov repository upload token"
+                },
+                "slug": {
+                    "type": "string",
+                    "description": "Specify the slug for the repository"
+                }
+            }
+        },
+        "github_script_with": {
+            "type": "object",
+            "description": "Input parameters for actions/github-script",
+            "additionalProperties": true,
+            "properties": {
+                "script": {
+                    "type": "string",
+                    "description": "The script to run"
+                },
+                "github-token": {
+                    "type": "string",
+                    "description": "GitHub token for authentication"
+                },
+                "debug": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Enable debug logging"
+                },
+                "result-encoding": {
+                    "type": "string",
+                    "enum": ["string", "json"],
+                    "description": "How to encode the result"
+                },
+                "retries": {
+                    "type": "string",
+                    "description": "Number of retries"
+                },
+                "retry-exempt-status-codes": {
+                    "type": "string",
+                    "description": "Comma-separated list of HTTP status codes to skip retrying"
+                }
+            }
+        },
+        "deploy_pages_with": {
+            "type": "object",
+            "description": "Input parameters for actions/deploy-pages",
+            "additionalProperties": true,
+            "properties": {
+                "artifact-id": {
+                    "type": "string",
+                    "description": "The artifact id for the build artifact to be deployed"
+                },
+                "token": {
+                    "type": "string",
+                    "description": "GitHub token for deployment"
+                },
+                "environment-url": {
+                    "type": "string",
+                    "description": "Base URL of the GitHub Pages site"
+                }
+            }
+        },
+        "reusable_workflow_job": {
+            "type": "object",
+            "required": [
+                "uses"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "needs": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                },
+                "if": {
+                    "$ref": "#/definitions/context_autocomplete_enums"
+                },
+                "uses": {
+                    "$ref": "#/definitions/action_uses"
+                },
+                "with": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "secrets": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "inherit"
+                            ]
+                        },
+                        {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                },
+                "permissions": {
+                    "$ref": "#/definitions/workflow_permissions"
+                }
+            }
+        },
+        "all_github_actions_contexts": {
+            "type": "object",
+            "description": "Complete reference mapping of injected execution objects inside expression blocks.",
+            "properties": {
+                "github": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string"
+                        },
+                        "action_path": {
+                            "type": "string"
+                        },
+                        "actor": {
+                            "type": "string"
+                        },
+                        "base_ref": {
+                            "type": "string"
+                        },
+                        "event": {
+                            "type": "object"
+                        },
+                        "event_name": {
+                            "type": "string"
+                        },
+                        "event_path": {
+                            "type": "string"
+                        },
+                        "head_ref": {
+                            "type": "string"
+                        },
+                        "job": {
+                            "type": "string"
+                        },
+                        "ref": {
+                            "type": "string"
+                        },
+                        "ref_name": {
+                            "type": "string"
+                        },
+                        "ref_protected": {
+                            "type": "boolean"
+                        },
+                        "ref_type": {
+                            "type": "string",
+                            "enum": [
+                                "branch",
+                                "tag"
+                            ]
+                        },
+                        "repository": {
+                            "type": "string"
+                        },
+                        "repository_owner": {
+                            "type": "string"
+                        },
+                        "run_id": {
+                            "type": "string"
+                        },
+                        "run_number": {
+                            "type": "string"
+                        },
+                        "run_attempt": {
+                            "type": "string"
+                        },
+                        "sha": {
+                            "type": "string"
+                        },
+                        "triggering_actor": {
+                            "type": "string"
+                        },
+                        "workflow": {
+                            "type": "string"
+                        },
+                        "workspace": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "context_autocomplete_enums": {
+            "type": "string",
+            "description": "GitHub Actions Inline Context Object Property Autocomplete Selection.",
+            "enum": [
+                "${{ github.action }}",
+                "${{ github.action_path }}",
+                "${{ github.actor }}",
+                "${{ github.base_ref }}",
+                "${{ github.event }}",
+                "${{ github.event_name }}",
+                "${{ github.event_path }}",
+                "${{ github.head_ref }}",
+                "${{ github.job }}",
+                "${{ github.ref }}",
+                "${{ github.ref_name }}",
+                "${{ github.ref_protected }}",
+                "${{ github.ref_type }}",
+                "${{ github.repository }}",
+                "${{ github.repository_owner }}",
+                "${{ github.run_id }}",
+                "${{ github.run_number }}",
+                "${{ github.run_attempt }}",
+                "${{ github.sha }}",
+                "${{ github.triggering_actor }}",
+                "${{ github.workflow }}",
+                "${{ github.workspace }}",
+                "${{ env. }}",
+                "${{ vars. }}",
+                "${{ secrets.GITHUB_TOKEN }}",
+                "${{ runner.name }}",
+                "${{ runner.os }}",
+                "${{ runner.arch }}",
+                "${{ runner.temp }}",
+                "${{ runner.tool_cache }}",
+                "${{ steps. }}",
+                "${{ matrix. }}",
+                "success()",
+                "failure()",
+                "always()",
+                "cancelled()",
+                "hashFiles('')"
+            ]
+        }
+    }
+}
