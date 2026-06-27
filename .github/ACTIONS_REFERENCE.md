@@ -70,7 +70,7 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
   with:
     ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
-
+- [Template-Checkout example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-checkout.yaml)
 ---
 
 ## Setup Actions
@@ -129,7 +129,8 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
     registry-url: 'https://registry.npmjs.org'
     scope: '@myorg'
 ```
-
+-  [Template-Setup Node example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-setup-node.yaml)
+---
 ### actions/setup-python
 
 **Description:** Setup Python environment with optional caching
@@ -181,7 +182,8 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
     python-version: ${{ matrix.python-version }}
     cache: pip
 ```
-
+- [Template-setup-python example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-setup-python.yaml)
+----
 ### actions/setup-java
 
 **Description:** Setup Java environment
@@ -205,6 +207,8 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
 | `cache` | string | gradle, maven | Dependency cache manager |
 | `check-latest` | boolean | - | Check for latest available version |
 
+-  [Template-setup-java example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-setup-java.yaml)
+----
 ### actions/setup-go
 
 **Description:** Setup Go environment
@@ -229,7 +233,8 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
 | `check-latest` | boolean | false | Check for latest available version |
 
 ---
-
+-  [Template-setup-go example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-setup-go.yaml)
+------
 ## Build & Push Actions
 
 ### docker/build-push-action
@@ -411,7 +416,8 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
       ~/.cache
     key:  runner.os -multi-{{ github.sha }}
 ```
-
+-  [Template-cache example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-cache.yaml)
+---
 ### codecov/codecov-action
 
 **Description:** Upload code coverage reports to Codecov
@@ -462,7 +468,7 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
     fail_ci_if_error: true
     token: \${{ secrets.CODECOV_TOKEN }}
 ```
-
+-  [Template-codecov example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-codecov.yaml)
 ---
 
 ## Artifact Management
@@ -514,7 +520,7 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
       ./coverage/**/*.html
     if-no-files-found: error
 ```
-
+- [Template-artifacts example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-artifacts.yaml)
 ### actions/download-artifact
 
 **Description:** Download build artifacts from previous jobs
@@ -563,7 +569,8 @@ Quick reference for all popular GitHub Actions with their `with:` parameters.
   with:
     artifact-id: github-pages
 ```
-
+- [Template-deploy-pages example ](https://github.com/Elnsor/custom-json-schema-validation/blob/main/.github/workflows/templates/template-deploy-pages.yaml)
+---
 **All Parameters:**
 
 | Parameter | Type | Default | Description |
