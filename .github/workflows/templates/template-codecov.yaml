@@ -1,0 +1,17 @@
+name: Code Coverage Upload Template
+on: [push]
+
+jobs:
+  coverage-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Upload Report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
