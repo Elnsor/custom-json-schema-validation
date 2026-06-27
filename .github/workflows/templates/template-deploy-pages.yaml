@@ -1,0 +1,21 @@
+name: Deploy to GitHub Pages Template
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-pages-job:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v3
+        with:
+          artifact-id: github-pages
