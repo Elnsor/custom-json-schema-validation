@@ -476,7 +476,169 @@
                             "timeout-minutes": {
                                 "type": "integer"
                             }
-                        }
+                        },
+                        "allOf": [
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/checkout"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/checkout_with"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/setup-node"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/setup_node_with"
+                                        }
+                                    }
+                                }
+                            },
+                             {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/cache"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/cache_with"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/upload-artifacts"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/upload_artifact_with"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/download-artifacts"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/download_artifact_with"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/setup-python"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/setup_python_with"
+                                        }
+                                    }
+                                }
+                            },
+                             {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/codecov-action"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/codecov_with"
+                                        }
+                                    }
+                                }
+                            },
+                             {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/docker-build-push"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/docker_build_push_with"
+                                        }
+                                    }
+                                }
+                            },
+                             {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/deploy-pages"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/deploy_pages_with"
+                                        }
+                                    }
+                                }
+                            },
+                             {
+                                "if": {
+                                    "properties": {
+                                        "uses": {
+                                            "pattern": "^actions/github-script"
+                                        }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": {
+                                            "$ref": "#/definitions/github_script_with"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
                     }
                 },
                 "timeout-minutes": {
@@ -522,8 +684,125 @@
             "examples": [
                 "actions/checkout@v4",
                 "actions/setup-node@v4",
+                "actions/setup-node@v3",
                 "actions/setup-python@v4",
-                "docker://ubuntu:22.04"
+                "actions/setup-python@v3",
+                "actions/setup-java@v3",
+                "actions/setup-go@v4",
+                "actions/setup-go@v3",
+                "actions/setup-dotnet@v3",
+                "actions/setup-ruby@v1",
+                "actions/setup-php@v2",
+                "actions/upload-artifact@v3",
+                "actions/upload-artifact@v4",
+                "actions/download-artifact@v3",
+                "actions/download-artifact@v4",
+                "actions/cache@v3",
+                "actions/cache@v4",
+                "actions/create-release@v1",
+                "actions/github-script@v7",
+                "actions/github-script@v6",
+                "actions/upload-release-asset@v1",
+                "actions/deploy-pages@v2",
+                "actions/deploy-pages@v3",
+                "actions/configure-pages@v3",
+                "codecov/codecov-action@v3",
+                "codecov/codecov-action@v4",
+                "super-linter/super-linter@v4",
+                "aquasecurity/trivy-action@master",
+                "sonarsource/sonarqube-scan-action@master",
+                "docker/build-push-action@v4",
+                "docker/build-push-action@v5",
+                "docker/login-action@v2",
+                "docker/login-action@v3",
+                "docker/setup-buildx-action@v2",
+                "docker/setup-buildx-action@v3",
+                "aws-actions/configure-aws-credentials@v2",
+                "aws-actions/configure-aws-credentials@v1",
+                "azure/login@v1",
+                "google-github-actions/auth@v1",
+                "google-github-actions/auth@v2",
+                "slackapi/slack-github-action@v1",
+                "8398a7/action-slack@v3",
+                "actions/stale@v8",
+                "actions/dependency-review-action@v3",
+                "actions/setup-gradle@v3",
+                "actions/setup-gradle@v2",
+                "actions/starter-workflows@main",
+                "dawidd6/action-publish-release@v1",
+                "ncipollo/release-action@v1",
+                "softprops/action-gh-release@v1",
+                "actions/labeler@v4",
+                "actions/labeler@v3",
+                "github/codeql-action/init@v2",
+                "github/codeql-action/analyze@v2",
+                "github/codeql-action/upload-sarif@v2",
+                "actions/first-interaction@v1",
+                "peaceiris/actions-gh-pages@v3",
+                "actions/close-pull@v3",
+                "actions/setup-dbt-cloud@main",
+                "actions/add-to-project@v0",
+                "actions/add-to-project@v1",
+                "EndBug/add-and-commit@v9",
+                "dawidd6/action-download-artifact@v2",
+                "dawidd6/action-download-artifact@v3",
+                "actions/virtual-environments@main",
+                "actions/python-versions@main",
+                "actions/node-versions@main",
+                "actions/go-versions@main",
+                "actions/ruby-versions@main",
+                "actions/java-versions@main",
+                "actions/setup-miniconda@v2",
+                "actions/setup-miniconda@v3",
+                "mluisbrown/github-action-tag-release@main",
+                "actions/check-spelling@v0",
+                "check-spelling/check-spelling@v0",
+                "actions/upload-sarif@v2",
+                "github/super-linter@v4",
+                "synergy-au/github-action-owasp-zap-full-scan@master",
+                "marketplace/build-push-docker-images@latest",
+                "marketplace/deploy-to-azure@latest",
+                "marketplace/deploy-to-aws@latest",
+                "marketplace/deploy-to-gcp@latest",
+                "marketplace/deploy-to-heroku@latest",
+                "marketplace/deploy-to-vercel@latest",
+                "marketplace/deploy-to-netlify@latest",
+                "marketplace/deploy-to-docker-registry@latest",
+                "marketplace/deploy-to-kubernetes@latest",
+                "marketplace/code-coverage@latest",
+                "marketplace/lint-code@latest",
+                "marketplace/run-tests@latest",
+                "marketplace/publish-npm@latest",
+                "marketplace/publish-to-maven@latest",
+                "marketplace/publish-to-nuget@latest",
+                "marketplace/publish-to-pypi@latest",
+                "marketplace/publish-to-rubygems@latest",
+                "marketplace/notification-slack@latest",
+                "marketplace/notification-email@latest",
+                "marketplace/notification-discord@latest",
+                "marketplace/notification-telegram@latest",
+                "marketplace/security-scan@latest",
+                "marketplace/dependency-check@latest",
+                "marketplace/lighthouse-ci@latest",
+                "marketplace/performance-testing@latest",
+                "marketplace/load-testing@latest",
+                "marketplace/accessibility-testing@latest",
+                "docker://ubuntu:22.04",
+                "docker://ubuntu:20.04",
+                "docker://ubuntu:latest",
+                "docker://node:18",
+                "docker://node:16",
+                "docker://node:latest",
+                "docker://python:3.11",
+                "docker://python:3.10",
+                "docker://python:3.9",
+                "docker://python:latest",
+                "docker://golang:1.20",
+                "docker://golang:1.19",
+                "docker://golang:latest",
+                "docker://rust:latest",
+                "docker://java:latest",
+                "docker://dotnet:latest"
             ],
             "markdownDescription": "**GitHub Marketplace Action**\n\n**Format**: `owner/action@version` or `docker://image:tag`\n\n**Version can be**:\n- Semantic version: `@v4`, `@v3.2.1`\n- Major version: `@v4` (uses latest v4.x)\n- Branch name: `@main`, `@develop`\n- Commit SHA: `@a1b2c3d4e5f6g7h8`\n\n📚 [Browse All GitHub Marketplace Actions →](https://github.com/marketplace?type=actions)"
         },
@@ -554,17 +833,26 @@
                 },
                 "ssh-strict": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Whether to perform strict host key checking"
                 },
                 "persist-credentials": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Whether to configure the token or SSH key with the local git config"
                 },
                 "clean": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Whether to execute git clean -ffdx && git reset --hard HEAD before fetching"
                 },
                 "fetch-depth": {
@@ -573,17 +861,27 @@
                 },
                 "lfs": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Whether to download Git-LFS files"
                 },
                 "submodules": {
                     "type": "string",
-                    "enum": ["true", "false", "recursive"],
+                    "enum": [
+                        "true",
+                        "false",
+                        "recursive"
+                    ],
                     "description": "Whether to checkout submodules: `true`, `false`, or `recursive`"
                 },
                 "set-safe-directory": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Add the repository path as a safe directory in git global config"
                 },
                 "github-server-url": {
@@ -615,7 +913,11 @@
                 },
                 "cache": {
                     "type": "string",
-                    "enum": ["npm", "yarn", "pnpm"],
+                    "enum": [
+                        "npm",
+                        "yarn",
+                        "pnpm"
+                    ],
                     "description": "Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm"
                 },
                 "cache-dependency-path": {
@@ -624,12 +926,18 @@
                 },
                 "architecture": {
                     "type": "string",
-                    "enum": ["x64", "x86"],
+                    "enum": [
+                        "x64",
+                        "x86"
+                    ],
                     "description": "Architecture of Node to use. Defaults to x64. Will use runner OS architecture by default."
                 },
                 "check-latest": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Deprecated. Use node-version-file instead"
                 },
                 "token": {
@@ -653,7 +961,11 @@
                 },
                 "cache": {
                     "type": "string",
-                    "enum": ["pip", "pipenv", "poetry"],
+                    "enum": [
+                        "pip",
+                        "pipenv",
+                        "poetry"
+                    ],
                     "description": "Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry"
                 },
                 "cache-dependency-path": {
@@ -662,7 +974,10 @@
                 },
                 "architecture": {
                     "type": "string",
-                    "enum": ["x64", "x86"],
+                    "enum": [
+                        "x64",
+                        "x86"
+                    ],
                     "description": "The target architecture of Python or PyPy to install. Defaults to x64"
                 },
                 "token": {
@@ -671,12 +986,18 @@
                 },
                 "update-environment": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Update environment PATH and PYTHONPATH. Defaults to true"
                 },
                 "allow-prereleases": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Allows to install pre-releases and development versions. Defaults to false"
                 }
             }
@@ -696,7 +1017,11 @@
                 },
                 "if-no-files-found": {
                     "type": "string",
-                    "enum": ["warn", "error", "ignore"],
+                    "enum": [
+                        "warn",
+                        "error",
+                        "ignore"
+                    ],
                     "description": "The desired behavior if no files are found using the provided path"
                 },
                 "retention-days": {
@@ -709,7 +1034,10 @@
                 },
                 "overwrite": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "If true, an artifact with the same name will be overwritten"
                 }
             }
@@ -756,17 +1084,26 @@
                 },
                 "enableCrossOsSymlink": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "If true, enables cross-OS symbolic link. Defaults to false"
                 },
                 "fail-on-cache-miss": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Fail the workflow if cache entry is not found"
                 },
                 "lookup-only": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "If true, only checks if cache entry exists and skips download"
                 }
             }
@@ -786,7 +1123,10 @@
                 },
                 "push": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Push is a shorthand for --output type=registry"
                 },
                 "tags": {
@@ -803,7 +1143,10 @@
                 },
                 "no-cache": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Do not use cache when building the image"
                 },
                 "platforms": {
@@ -812,7 +1155,10 @@
                 },
                 "load": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Load is a shorthand for --output type=docker"
                 },
                 "outputs": {
@@ -848,12 +1194,18 @@
                 },
                 "fail_ci_if_error": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Fail CI if Codecov runs into an error during upload"
                 },
                 "verbose": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Enable verbose logging"
                 },
                 "token": {
@@ -881,12 +1233,18 @@
                 },
                 "debug": {
                     "type": "string",
-                    "enum": ["true", "false"],
+                    "enum": [
+                        "true",
+                        "false"
+                    ],
                     "description": "Enable debug logging"
                 },
                 "result-encoding": {
                     "type": "string",
-                    "enum": ["string", "json"],
+                    "enum": [
+                        "string",
+                        "json"
+                    ],
                     "description": "How to encode the result"
                 },
                 "retries": {
