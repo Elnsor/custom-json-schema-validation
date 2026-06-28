@@ -18,6 +18,7 @@
             "description": "The name for workflow runs generated from the workflow. Can evaluate context expressions."
         },
         "on": {
+            "$comment": "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#on",
             "description": "The event or list of events that trigger the workflow run.",
             "anyOf": [
                 {
@@ -375,24 +376,7 @@
                     ]
                 },
                 "runs-on": {
-                    "anyOf": [
-                        {
-                            "type": "string",
-                            "enum": [
-                                "ubuntu-latest",
-                                "ubuntu-24.04",
-                                "ubuntu-22.04",
-                                "windows-latest",
-                                "macos-latest"
-                            ]
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    ]
+                    "$ref": "#/definitions/runs_on"
                 },
                 "permissions": {
                     "$ref": "#/definitions/workflow_permissions"
@@ -482,7 +466,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/checkout"
+                                            "pattern": "^actions/checkout(@|$)"
                                         }
                                     }
                                 },
@@ -498,7 +482,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/setup-node"
+                                            "pattern": "^actions/setup-node(@|$)"
                                         }
                                     }
                                 },
@@ -514,7 +498,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/cache"
+                                            "pattern": "^actions/cache(@|$)"
                                         }
                                     }
                                 },
@@ -530,7 +514,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/upload-artifacts"
+                                            "pattern": "^actions/upload-artifact(@|$)"
                                         }
                                     }
                                 },
@@ -546,7 +530,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/download-artifacts"
+                                            "pattern": "^actions/download-artifact(@|$)"
                                         }
                                     }
                                 },
@@ -562,7 +546,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/setup-python"
+                                            "pattern": "^actions/setup-python(@|$)"
                                         }
                                     }
                                 },
@@ -578,7 +562,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/codecov-action"
+                                            "pattern": "^actions/codecov-action(@|$)"
                                         }
                                     }
                                 },
@@ -594,7 +578,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/docker-build-push"
+                                            "pattern": "^actions/docker-build-push(@|$)"
                                         }
                                     }
                                 },
@@ -606,11 +590,59 @@
                                     }
                                 }
                             },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": { "pattern": "^docker/login-action(@|$)" }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": { "$ref": "#/definitions/docker_login_with" }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": { "pattern": "^docker/setup-buildx-action(@|$)" }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": { "$ref": "#/definitions/docker_setup_buildx_with" }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": { "pattern": "^docker/setup-qemu-action(@|$)" }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": { "$ref": "#/definitions/docker_setup_qemu_with" }
+                                    }
+                                }
+                            },
+                            {
+                                "if": {
+                                    "properties": {
+                                        "uses": { "pattern": "^docker/metadata-action(@|$)" }
+                                    }
+                                },
+                                "then": {
+                                    "properties": {
+                                        "with": { "$ref": "#/definitions/docker_metadata_with" }
+                                    }
+                                }
+                            },
                              {
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/deploy-pages"
+                                            "pattern": "^actions/deploy-pages(@|$)"
                                         }
                                     }
                                 },
@@ -626,7 +658,7 @@
                                 "if": {
                                     "properties": {
                                         "uses": {
-                                            "pattern": "^actions/github-script"
+                                            "pattern": "^actions/github-script(@|$)"
                                         }
                                     }
                                 },
@@ -675,6 +707,33 @@
                     }
                 }
             }
+        },
+        "runner_item": {
+      "type": "string",
+      "description": "The GitHub Runner List ",
+      "examples": [
+        "ubuntu-latest",
+        "ubuntu-24.04",
+        "ubuntu-22.04",
+        "windows-latest",
+        "macos-latest"
+      ]
+    },
+        "runs_on":{
+            "type":["string","array"],
+             "description": "The GitHub Runner to execute ",
+            "default": "ubuntu-latest",
+            "anyOf": [
+                        {
+                           "$ref":  "#/definitions/runner_item"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/runner_item"
+                            }
+                        }
+                    ]
         },
         "action_uses": {
             "type": "string",
@@ -1172,6 +1231,130 @@
                 "cache-to": {
                     "type": "string",
                     "description": "List of cache destinations"
+                }
+            }
+        },
+        "docker_login_with": {
+            "type": "object",
+            "description": "Input parameters for docker/login-action",
+            "additionalProperties": true,
+            "properties": {
+                "registry": {
+                    "type": "string",
+                    "description": "Server address of your custom registry. Leave plain for Docker Hub."
+                },
+                "username": {
+                    "type": "string",
+                    "description": "Username used to log into the container registry."
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Password or personal access token used to log into the container registry."
+                },
+                "ecr": {
+                    "type": "string",
+                    "enum": ["true", "false", "auto"],
+                    "description": "Skip registry decryption for AWS ECR if set to true."
+                },
+                "logout": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Log out of the registry at the end of the job. Defaults to true."
+                }
+            }
+        },
+        "docker_setup_buildx_with": {
+            "type": "object",
+            "description": "Input parameters for docker/setup-buildx-action",
+            "additionalProperties": true,
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "description": "Buildx version to install (e.g., v0.10.0 or latest)."
+                },
+                "driver": {
+                    "type": "string",
+                    "description": "Builder driver to use. Defaults to docker-container."
+                },
+                "driver-opts": {
+                    "type": "string",
+                    "description": "List of additional driver options."
+                },
+                "buildkitd-flags": {
+                    "type": "string",
+                    "description": "Flags to pass to buildkitd daemon."
+                },
+                "install": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Sets up docker build command as an alias to docker buildx build."
+                },
+                "use": {
+                    "type": "string",
+                    "enum": ["true", "false"],
+                    "description": "Set builder instance as current default builder."
+                },
+                "endpoint": {
+                    "type": "string",
+                    "description": "Docker socket endpoint or context name to use."
+                },
+                "config": {
+                    "type": "string",
+                    "description": "BuildKit configuration file path."
+                },
+                "config-inline": {
+                    "type": "string",
+                    "description": "Inline BuildKit configuration content."
+                }
+            }
+        },
+        "docker_setup_qemu_with": {
+            "type": "object",
+            "description": "Input parameters for docker/setup-qemu-action",
+            "additionalProperties": true,
+            "properties": {
+                "platforms": {
+                    "type": "string",
+                    "description": "Comma-separated list of architectures to install (e.g., arm64, riscv64, all)."
+                },
+                "image": {
+                    "type": "string",
+                    "description": "QEMU static binaries Docker image to pull. Defaults to tonistiigi/binfmt:latest."
+                }
+            }
+        },
+        "docker_metadata_with": {
+            "type": "object",
+            "description": "Input parameters for docker/metadata-action",
+            "additionalProperties": true,
+            "properties": {
+                "images": {
+                    "type": "string",
+                    "description": "List of container image base names to generate tags for (newline-separated)."
+                },
+                "tags": {
+                    "type": "string",
+                    "description": "Tag configuration rule lines (newline-separated)."
+                },
+                "flavor": {
+                    "type": "string",
+                    "description": "Flavor configuration options (newline-separated)."
+                },
+                "labels": {
+                    "type": "string",
+                    "description": "Custom key-value pairs to add as image labels."
+                },
+                "sep-tags": {
+                    "type": "string",
+                    "description": "Separator used for output tags variable. Defaults to newline."
+                },
+                "sep-labels": {
+                    "type": "string",
+                    "description": "Separator used for output labels variable. Defaults to newline."
+                },
+                "bake-target": {
+                    "type": "string",
+                    "description": "Output target definition for Docker Bake."
                 }
             }
         },
